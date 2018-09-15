@@ -2,15 +2,36 @@ const { execFile } = require('child_process');
 const fs = require('fs');
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
+const path = require('path');
 
 const AWS = require('aws-sdk');
 const s3 = AWS.s3;
 
 exports.handler = async message => {
   console.log(message);
-  await spawnPromise('find', ['/', '-print'], {'cwd': 'front-end'});
-  await spawnPromise('../node_modules/.bin/npm', ['install'], {'cwd': 'front-end'});
-  await spawnPromise('../node_modules/.bin/npm', ['run', 'build'], {'cwd': 'front-end'});
+  const npm = path.resolve(require.resolve('npm'), '../../../../node_modules/npm/bin/npm-cli.js');
+  await spawnPromise(
+    npm,
+    ['--production',
+      '--no-progress',
+      '--loglevel=error',
+      '--cache', path.join('/tmp', 'npm'),
+      '--userconfig', path.join('/tmp', 'npmrc'),
+      'install'
+    ],
+    {cwd: 'front-end'}
+  );
+  await spawnPromise(
+    npm,
+    ['--production',
+      '--no-progress',
+      '--loglevel=error',
+      '--cache', path.join('/tmp', 'npm'),
+      '--userconfig', path.join('/tmp', 'npmrc'),
+      'run', 'build'
+    ],
+    {cwd: 'front-end'}
+  );
 
   console.log(process.cwd());
   const fh = await readFile('front-end/build/index.html');
