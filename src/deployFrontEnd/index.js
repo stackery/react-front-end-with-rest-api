@@ -11,8 +11,8 @@ exports.handler = async message => {
   console.log(message);
   const tmpDir = `/tmp/react-front-end${process.pid}`;
   const npm = 'npm';
-  await spawnPromise('mkdir', [tmpDir]);
   await spawnPromise('rm', ['-rf', tmpDir]);
+  await spawnPromise('mkdir', [tmpDir]);
   await spawnPromise('cp', ['-R', 'front-end/', tmpDir]);
   await spawnPromise(
     npm,
@@ -37,15 +37,10 @@ exports.handler = async message => {
     {cwd: tmpDir}
   );
 
-  await spawnPromise('ls', ['/tmp'], {cwd: tmpDir});
-  await spawnPromise('ls', [tmpDir], {cwd: tmpDir});
-  await spawnPromise('ls', ['build'], {cwd: tmpDir});
-
-  console.log(process.cwd());
   const fh = await readFile(`${tmpDir}/build/index.html`);
   console.log(fh);
 
-  var params = {
+  const params = {
     ACL: 'public-read',
     Body: fh,
     Bucket: process.env.BUCKET_NAME,
