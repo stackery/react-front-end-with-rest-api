@@ -79,11 +79,17 @@ Resources:
         - AWSXrayWriteOnlyAccess
         - S3CrudPolicy:
             BucketName: !Ref objectStore24B2BE91
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObjectVersionAcl
+              Resource:
+                - !GetAtt objectStore24B2BE91.arn
       Environment:
         Variables:
+          XDG_CONFIG_HOME: /tmp/.config
           BUCKET_NAME: !Ref objectStore24B2BE91
           BUCKET_ARN: !GetAtt objectStore24B2BE91.Arn
-          XDG_CONFIG_HOME: /tmp/.config
     Metadata:
       StackeryName: deployFrontEnd
   objectStore24B2BE91:
