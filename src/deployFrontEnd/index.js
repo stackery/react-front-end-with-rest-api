@@ -12,7 +12,6 @@ exports.handler = async message => {
   const tmpDir = `/tmp/react-front-end${process.pid}`;
   const npm = 'npm';
   await spawnPromise('rm', ['-rf', tmpDir]);
-  await spawnPromise('mkdir', [tmpDir]);
   await spawnPromise('cp', ['-R', 'front-end/', tmpDir]);
   await spawnPromise(
     npm,
