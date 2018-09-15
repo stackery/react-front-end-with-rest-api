@@ -82,10 +82,9 @@ Resources:
         - Statement:
             - Effect: Allow
               Action:
-                - s3:PutObjectVersionAcl
+                - s3:PutObjectAcl
               Resource:
                 - !Sub ${objectStore24B2BE91.Arn}/*
-                - !GetAtt objectStore24B2BE91.Arn
       Environment:
         Variables:
           XDG_CONFIG_HOME: /tmp/.config
