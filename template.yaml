@@ -130,8 +130,14 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${AWS::StackName}-objectstore24b2be91
+      "AccessControl" : "PublicRead",
+      "WebsiteConfiguration":
+         "IndexDocument" : "index.html"
+         "ErrorDocument" : "index.html"
     Metadata:
       StackeryName: S3 Website Hosting
+   }
+}     
   cdn179D711BOriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
