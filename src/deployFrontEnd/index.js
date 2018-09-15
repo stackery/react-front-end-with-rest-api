@@ -9,7 +9,10 @@ const s3 = AWS.s3;
 
 exports.handler = async message => {
   console.log(message);
-  const npm = path.resolve(require.resolve('npm'), '../../../../node_modules/npm/bin/npm-cli.js');
+  const tmpDir = `/tmp/react-front-end${process.pid}`;
+  const npm = 'npm';
+  await spawnPromise('mkdir', [tmpDir]);
+  await spawnPromise('cp', ['-R', 'front-end/', tmpDir]);
   await spawnPromise(
     npm,
     ['--production',
@@ -19,7 +22,7 @@ exports.handler = async message => {
       '--userconfig', path.join('/tmp', 'npmrc'),
       'install'
     ],
-    {cwd: 'front-end'}
+    {cwd: tmpDir}
   );
   await spawnPromise(
     npm,
@@ -30,7 +33,7 @@ exports.handler = async message => {
       '--userconfig', path.join('/tmp', 'npmrc'),
       'run', 'build'
     ],
-    {cwd: 'front-end'}
+    {cwd: tmpDir}
   );
 
   console.log(process.cwd());
