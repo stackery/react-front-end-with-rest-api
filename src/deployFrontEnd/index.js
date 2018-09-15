@@ -8,7 +8,7 @@ const s3 = AWS.s3;
 
 exports.handler = async message => {
   console.log(message);
-  const child = await spawnSync('../node_modules/.bin/npm', ['run', 'build'], {'cwd': 'front-end'});
+  const child = spawnSync('../node_modules/.bin/npm', ['run', 'build'], {'cwd': 'front-end'});
   console.log(child);
 
   var params = {
