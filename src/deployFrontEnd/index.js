@@ -3,6 +3,7 @@ const fs = require('fs');
 const util = require('util');
 const readFile = util.promisify(fs.readFile);
 const path = require('path');
+const mime = require('mime-types');
 
 const AWS = require('aws-sdk');
 
@@ -36,12 +37,15 @@ exports.handler = async message => {
     {cwd: tmpDir}
   );
 
-  const fh = await readFile(`${tmpDir}/build/index.html`);
-  console.log(fh);
+  const filePath = `${tmpDir}/build/index.html`;
+  const mimeType = mime.lookup(filePath) || 'application/octet-stream';
+  console.log(mimeType);
+  const fileHandle = await readFile(filePath);
 
   const params = {
     ACL: 'public-read',
-    Body: fh,
+    ContentType: mimeType,
+    Body: fileHandle,
     Bucket: process.env.BUCKET_NAME,
     Key: 'index.html'
   };
