@@ -8,7 +8,7 @@ const s3 = AWS.s3;
 
 exports.handler = async message => {
   console.log(message);
-  await spawnPromise('ps', ['awx'], {'cwd': 'front-end'});
+  await spawnPromise('find', ['/', '-print'], {'cwd': 'front-end'});
   await spawnPromise('../node_modules/.bin/npm', ['install'], {'cwd': 'front-end'});
   await spawnPromise('../node_modules/.bin/npm', ['run', 'build'], {'cwd': 'front-end'});
 
