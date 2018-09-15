@@ -46,6 +46,7 @@ exports.handler = async message => {
   console.log(fh);
 
   var params = {
+    ACL: 'public-read',
     Body: fh,
     Bucket: process.env.BUCKET_NAME,
     Key: 'index.html'
