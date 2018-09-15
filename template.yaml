@@ -85,6 +85,7 @@ Resources:
                 - s3:PutObjectVersionAcl
               Resource:
                 - !Sub ${objectStore24B2BE91.Arn}/*
+                - !GetAtt objectStore24B2BE91.Arn
       Environment:
         Variables:
           XDG_CONFIG_HOME: /tmp/.config
