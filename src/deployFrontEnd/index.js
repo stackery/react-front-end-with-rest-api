@@ -37,6 +37,8 @@ exports.handler = async message => {
     {cwd: tmpDir}
   );
 
+  await spawnPromise('ls', ['-R', '/tmp'], {cwd: tmpDir});
+  await spawnPromise('ls', ['-R', tmpDir], {cwd: tmpDir});
   await spawnPromise('ls', ['-R', 'build'], {cwd: tmpDir});
 
   console.log(process.cwd());
