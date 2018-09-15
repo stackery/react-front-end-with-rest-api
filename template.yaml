@@ -130,7 +130,7 @@ Resources:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${AWS::StackName}-objectstore24b2be91
-      "AccessControl" : "PublicRead",
+      "AccessControl" : "PublicRead"
       "WebsiteConfiguration":
          "IndexDocument" : "index.html"
          "ErrorDocument" : "index.html"
