@@ -5,8 +5,8 @@ const readFile = util.promisify(fs.readFile);
 const path = require('path');
 
 const AWS = require('aws-sdk');
-const s3 = AWS.s3;
 
+const s3 = new AWS.S3();
 exports.handler = async message => {
   console.log(message);
   const tmpDir = `/tmp/react-front-end${process.pid}`;
