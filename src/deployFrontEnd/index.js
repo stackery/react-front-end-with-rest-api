@@ -38,7 +38,7 @@ exports.handler = async message => {
   );
 
   console.log(process.cwd());
-  const fh = await readFile('/tmp/build/index.html');
+  const fh = await readFile(`${tmpDir}/build/index.html`);
   console.log(fh);
 
   var params = {
