@@ -6,11 +6,14 @@ const path = require('path');
 const mime = require('mime-types');
 
 const AWS = require('aws-sdk');
+var glob = require('glob');
 
 const s3 = new AWS.S3();
 exports.handler = async message => {
   console.log(message);
+
   const tmpDir = `/tmp/react-front-end${process.pid}`;
+
   const npm = 'npm';
   await spawnPromise('rm', ['-rf', tmpDir]);
   await spawnPromise('cp', ['-R', 'front-end/', tmpDir]);
@@ -37,21 +40,28 @@ exports.handler = async message => {
     {cwd: tmpDir}
   );
 
-  const filePath = `${tmpDir}/build/index.html`;
-  const mimeType = mime.lookup(filePath) || 'application/octet-stream';
-  console.log(mimeType);
-  const fileHandle = await readFile(filePath);
+  const builtPaths = glob.sync(`${tmpDir}/build/**/*`);
+  console.log(builtPaths);
+  builtPaths.forEach(async (path) => {
+    if (!fs.lstatSync(path).isFile()) {
+      return;
+    }
+    const mimeType = mime.lookup(path) || 'application/octet-stream';
+    console.log(mimeType);
+    const fileHandle = await readFile(path);
+    const key = path.replace(`${tmpDir}/build/`, '');
 
-  const params = {
-    ACL: 'public-read',
-    ContentType: mimeType,
-    Body: fileHandle,
-    Bucket: process.env.BUCKET_NAME,
-    Key: 'index.html'
-  };
-  console.log(params);
-  const s3Response = await s3.putObject(params).promise();
-  console.log(s3Response);
+    const params = {
+      ACL: 'public-read',
+      ContentType: mimeType,
+      Body: fileHandle,
+      Bucket: process.env.BUCKET_NAME,
+      Key: key
+    };
+    console.log(params);
+    const s3Response = await s3.putObject(params).promise();
+    console.log(s3Response);
+  });
 
   return {};
 };
