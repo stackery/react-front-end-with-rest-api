@@ -12,7 +12,7 @@ exports.handler = async message => {
   console.log(child);
 
   var params = {
-    Body: await readFile('./front-end/build/index.html'),
+    Body: await readFile('./build/index.html'),
     Bucket: process.env.BUCKET_NAME,
     Key: 'index.html'
   };
