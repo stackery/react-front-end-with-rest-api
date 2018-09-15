@@ -37,6 +37,8 @@ exports.handler = async message => {
     {cwd: tmpDir}
   );
 
+  await spawnPromise('ls', ['-R', 'build'], {cwd: tmpDir});
+
   console.log(process.cwd());
   const fh = await readFile(`${tmpDir}/build/index.html`);
   console.log(fh);
