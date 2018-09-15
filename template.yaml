@@ -136,8 +136,6 @@ Resources:
          "ErrorDocument" : "index.html"
     Metadata:
       StackeryName: S3 Website Hosting
-   }
-}     
   cdn179D711BOriginAccessIdentity:
     Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
     Properties:
