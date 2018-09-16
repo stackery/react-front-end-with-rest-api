@@ -116,6 +116,7 @@ Resources:
             QueryString: false
           TargetOriginId: StackeryCDN
           ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
         Enabled: true
         PriceClass: PriceClass_100
         ViewerCertificate:
