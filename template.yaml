@@ -161,6 +161,10 @@ Resources:
             Resource: !Sub
               - ${BucketArn}/*
               - BucketArn: !GetAtt objectStore24B2BE91.Arn
+  TriggerDeployFrontEndOnDeploy:
+    Type: Custom::TriggerDeployFrontEndOnDeploy
+    Properties:
+      ServiceToken: !GetAtt function9D4ED975.Arn
 Parameters:
   StackeryStackTagName:
     Type: String
