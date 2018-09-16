@@ -13,6 +13,9 @@ class App extends Component {
         <p className='App-intro'>
         Work in progress
         </p>
+        <p>
+          <a href='https://www.stackery.io'>www.stackery.io</a>
+        </p>
       </div>
     );
   }
