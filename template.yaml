@@ -106,6 +106,7 @@ Resources:
     Type: Custom::TriggerDeployFrontEndOnDeploy
     Properties:
       ServiceToken: !GetAtt function9D4ED975.Arn
+      Trigger: !Ref StackeryDeploymentTimestamp
 Parameters:
   StackeryStackTagName:
     Type: String
