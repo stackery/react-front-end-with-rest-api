@@ -180,6 +180,9 @@ Parameters:
   StackeryDeploymentNamespace:
     Type: String
     Description: Stackery Deployment Namespace (injected by Stackery at deployment time)
+  StackeryDeploymentTimestamp:
+    Type: Number
+    Description: Timestamp (injected by Stackery at deployment time)
 Metadata:
   StackeryErrorsTargets:
     function8E6C5467: {}
