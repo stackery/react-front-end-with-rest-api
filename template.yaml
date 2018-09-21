@@ -117,6 +117,9 @@ Parameters:
   StackeryEnvironmentAPIGatewayStageName:
     Type: String
     Description: Environment name used for API Gateway Stage names (injected by Stackery at deployment time)
+  StackeryDeploymentTimestamp:
+    Type: Number
+    Description: Timestamp (injected by Stackery at deployment time)
 Metadata:
   StackeryErrorsTargets:
     function8E6C5467: {}
