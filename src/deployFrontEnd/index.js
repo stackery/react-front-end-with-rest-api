@@ -11,6 +11,7 @@ var glob = require('glob');
 
 const s3 = new AWS.S3();
 exports.handler = async message => {
+  console.log(process.env.API_URL);
   console.log(message);
   try {
     const tmpDir = `/tmp/react-front-end${process.pid}`;

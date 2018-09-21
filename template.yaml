@@ -90,6 +90,7 @@ Resources:
           XDG_CONFIG_HOME: /tmp/.config
           BUCKET_NAME: !Ref objectStore24B2BE91
           BUCKET_ARN: !GetAtt objectStore24B2BE91.Arn
+          API_URL: !Sub https://${apiFE76C470}.execute-api.${AWS::Region}.amazonaws.com/${apiFE76C470.Stage}
     Metadata:
       StackeryName: deployFrontEnd
   objectStore24B2BE91:
