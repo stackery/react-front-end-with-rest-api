@@ -14,7 +14,7 @@ class App extends Component {
         Work in progress
         </p>
         <p>
-          <a href='https://www.stackery.io'>www.stackery.io</a>
+          <a href='https://docs.stackery.io'>docs.stackery.io</a>
         </p>
       </div>
     );
