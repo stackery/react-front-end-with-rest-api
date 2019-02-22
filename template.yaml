@@ -2,10 +2,78 @@ AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: Stackery Serverless API Example Stack
 Resources:
-  function61D00F31:
+  TriggerDeployFrontEndOnDeploy:
+    Type: Custom::TriggerDeployFrontEndOnDeploy
+    Properties:
+      ServiceToken: !GetAtt deployFrontEnd.Arn
+      Trigger: !Ref StackeryDeploymentTimestamp
+  deployFrontEnd:
     Type: AWS::Serverless::Function
     Properties:
-      FunctionName: !Sub ${AWS::StackName}-function61D00F31
+      FunctionName: !Sub ${AWS::StackName}-deployFrontEnd
+      Description: !Sub
+        - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Function ${ResourceName}
+        - ResourceName: deployFrontEnd
+      CodeUri: src/deployFrontEnd
+      Handler: index.handler
+      Runtime: nodejs8.10
+      MemorySize: 3008
+      Timeout: 300
+      Tracing: Active
+      Policies:
+        - AWSXrayWriteOnlyAccess
+        - S3CrudPolicy:
+            BucketName: !Ref websiteHosting
+        - Statement:
+            - Effect: Allow
+              Action:
+                - s3:PutObjectAcl
+              Resource:
+                - !Sub ${websiteHosting.Arn}/*
+      Environment:
+        Variables:
+          XDG_CONFIG_HOME: /tmp/.config
+          BUCKET_NAME: !Ref websiteHosting
+          BUCKET_ARN: !GetAtt websiteHosting.Arn
+    Metadata:
+      StackeryName: deployFrontEnd
+  deployFrontEndDeployTrigger:
+    Type: Custom::FunctionDeployTrigger
+    Properties:
+      ServiceToken: !GetAtt deployFrontEnd.Arn
+  websiteHosting:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${AWS::StackName}-websitehosting
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+    Metadata:
+      StackeryName: S3 Website Hosting
+  api:
+    Type: AWS::Serverless::Api
+    Properties:
+      Name: !Sub
+        - ${ResourceName} From Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName}
+        - ResourceName: api
+      StageName: !Ref StackeryEnvironmentAPIGatewayStageName
+      DefinitionBody:
+        swagger: '2.0'
+        info: {}
+        paths:
+          /:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${getWelcomePage.Arn}/invocations
+              responses: {}
+      EndpointConfiguration: REGIONAL
+  getWelcomePage:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub ${AWS::StackName}-getWelcomePage
       Description: !Sub
         - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Function ${ResourceName}
         - ResourceName: getWelcomePage
@@ -23,90 +91,9 @@ Resources:
           Properties:
             Path: /
             Method: GET
-            RestApiId: !Ref apiFE76C470
+            RestApiId: !Ref api
     Metadata:
       StackeryName: getWelcomePage
-  apiFE76C470:
-    Type: AWS::Serverless::Api
-    Properties:
-      Name: !Sub
-        - ${ResourceName} From Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName}
-        - ResourceName: apiFE76C470
-      StageName: !Ref StackeryEnvironmentAPIGatewayStageName
-      DefinitionBody:
-        swagger: '2.0'
-        info: {}
-        paths:
-          /:
-            get:
-              x-amazon-apigateway-integration:
-                httpMethod: POST
-                type: aws_proxy
-                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${function61D00F31.Arn}/invocations
-              responses: {}
-      EndpointConfiguration: REGIONAL
-  function8E6C5467:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${AWS::StackName}-function8E6C5467
-      Description: !Sub
-        - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Function ${ResourceName}
-        - ResourceName: logErrors
-      CodeUri: src/logErrors
-      Handler: index.handler
-      Runtime: nodejs8.10
-      MemorySize: 3008
-      Timeout: 30
-      Tracing: Active
-      Policies:
-        - AWSXrayWriteOnlyAccess
-    Metadata:
-      StackeryName: logErrors
-  function9D4ED975:
-    Type: AWS::Serverless::Function
-    Properties:
-      FunctionName: !Sub ${AWS::StackName}-function9D4ED975
-      Description: !Sub
-        - Stackery Stack ${StackeryStackTagName} Environment ${StackeryEnvironmentTagName} Function ${ResourceName}
-        - ResourceName: deployFrontEnd
-      CodeUri: src/deployFrontEnd
-      Handler: index.handler
-      Runtime: nodejs8.10
-      MemorySize: 3008
-      Timeout: 300
-      Tracing: Active
-      Policies:
-        - AWSXrayWriteOnlyAccess
-        - S3CrudPolicy:
-            BucketName: !Ref objectStore24B2BE91
-        - Statement:
-            - Effect: Allow
-              Action:
-                - s3:PutObjectAcl
-              Resource:
-                - !Sub ${objectStore24B2BE91.Arn}/*
-      Environment:
-        Variables:
-          XDG_CONFIG_HOME: /tmp/.config
-          BUCKET_NAME: !Ref objectStore24B2BE91
-          BUCKET_ARN: !GetAtt objectStore24B2BE91.Arn
-    Metadata:
-      StackeryName: deployFrontEnd
-  objectStore24B2BE91:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub ${AWS::StackName}-objectstore24b2be91
-      AccessControl: PublicRead
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: index.html
-    Metadata:
-      StackeryName: S3 Website Hosting
-  TriggerDeployFrontEndOnDeploy:
-    Type: Custom::TriggerDeployFrontEndOnDeploy
-    Properties:
-      ServiceToken: !GetAtt function9D4ED975.Arn
-      Trigger: !Ref StackeryDeploymentTimestamp
 Parameters:
   StackeryStackTagName:
     Type: String
@@ -119,7 +106,7 @@ Parameters:
     Description: Environment name used for API Gateway Stage names (injected by Stackery at deployment time)
   StackeryDeploymentTimestamp:
     Type: Number
-    Description: Timestamp (injected by Stackery at deployment time)
+    Description: Deployment preparation timestamp in milliseconds Since Epoch (injected by Stackery at deployment time)
 Metadata:
   StackeryErrorsTargets:
     function8E6C5467: {}
