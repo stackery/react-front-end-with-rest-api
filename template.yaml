@@ -86,7 +86,7 @@ Resources:
       Policies:
         - AWSXrayWriteOnlyAccess
       Events:
-        apiFE76C470:
+        apiGET:
           Type: Api
           Properties:
             Path: /
@@ -107,6 +107,3 @@ Parameters:
   StackeryDeploymentTimestamp:
     Type: Number
     Description: Deployment preparation timestamp in milliseconds Since Epoch (injected by Stackery at deployment time)
-Metadata:
-  StackeryErrorsTargets:
-    function8E6C5467: {}
